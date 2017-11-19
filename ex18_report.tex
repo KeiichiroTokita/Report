@@ -1,0 +1,280 @@
+%¥documentclass[twocolumn,10pt]{jarticle}
+%¥setlength{¥columnsep}{3zw}
+\documentclass[]{jsarticle}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath,amssymb, ascmac}
+
+\title{後期実験総合レポート\\『課題番号18：電力経済』}
+\author{学籍番号03-170522　時田 圭一郎}
+\date{実験日時：2017年11月2日 - 2017年11月13日\\
+  提出：2017年11月27日}
+
+\begin{document}
+\setcounter{section}{-1}
+\maketitle
+
+  \section{序論}
+      今日では, 様々な発電方式を組み合わせて電力供給を行なっているが, その組み合わせ方は安定性, 経済性, 環境保全性と行った様々な要因により決まる. 『課題番号18：電力経済』では, 発電コストがどのようにして決められているか, 火力・水力・原子力などの電源構成がどのように決定されているかを線形計画法を用いたモデル解析により理解することを目的とする. 実験は課題1から5までの五つからなり, それぞれが異なる数理計画問題を扱っている. 本稿では, それらの課題についての詳細, 結果, 及び考察を述べる.
+
+  \section{課題1：発電原価の算定}
+    \begin{screen}
+      　表\ref{task1}に示された各種発電所の前提条件に基づいて以下の問題を検討しなさい. ここでは, 設備利用率（設備利用率は, 1年間の発電電力量 / （定格出力 $\times$ 1年間の時間数）と定義する）70\%の場合を考える. ただし年間利子率を8\%とし, 減価償却は定額償却を仮定し各年度末に全てのコストが発生するものとする. \\
+      (1)各種発電所の初年度年経費率を求めよ. \\
+      (2)各種発電所の初年度発電原価を求めよ.\\
+      (3)各種発電所の償却期間均等化年経費率を求めよ.\\
+      (4)各種発電所の償却期間均等化発電原価を求めよ.\\
+      (5)太陽光発電や風力発電の発電原価について調査し, 上記で求めた発電原価と比較せよ.
+    \end{screen}
+
+    \begin{table}[htb]
+      \begin{center}
+        \caption{各種発電所の前提条件\cite{t}}
+        \begin{tabular}{|c|c|c|c|c|} \hline
+              　  & 原子力 & 石炭火力 & 天然ガス火力 & 石油火力 \\ \hline
+          建設単価 & 37万円/kW & 25万円/kW & 12万円/kW & 20万円/kW \\ \hline
+          燃料費 & 1.5円/kWh & 5.0円/kg & 105円/kg & 108円/L \\ \hline
+          償却期間 & 16年 & 15年 & 15年 & 15年 \\ \hline
+          残存価値率 & 10.0\% & 10.0\% & 10.0\% & 10.0\% \\ \hline
+          固定資産税率 & 1.4\% & 1.4\% & 1.4\% & 1.4\% \\ \hline
+          運転費率 & 4.0\% & 5.0\% & 3.0\% & 4.0\% \\ \hline
+          運転発熱量 & - & 6,000kcal/kg & 13,000kcal/kg & 9,750kcal/L \\ \hline
+          発電効率 & - & 42\% & 52\% & 39\% \\ \hline
+        \end{tabular}
+        \label{task1}
+      \end{center}
+    \end{table}
+
+
+
+    \subsection{原理\label{pri1}}
+        初年度年経費率$g_{initial}$は, 以下のような式で表される.
+        \begin{eqnarray}
+          \label{g_initial}
+          g_{initial} = \frac{1-r}{N} + i + f + m
+        \end{eqnarray}
+        ただし, $r$は償却資産の残存価値率, $N$は償却期間[年], $i$は年間利子率, $f$は固定資産税率, $m$は運転費率である.\\
+
+        初年度発電原価$P_{initial}$は, 以下のような式で表される.
+        \begin{eqnarray}
+          P_{initial} = P_V + g_{initial} \times \frac{P_F}{T_A}
+        \end{eqnarray}
+        ただし, $P_V$は発電電力量1kWhあたりの燃料費[円/kWh], $g_{initial}$は上述の初年度年経費率, $P_F$は建設単価[円/kW], $T_A$は年間運転時間[hour/year]である.\\
+
+        償却期間均等化年経費率$g_{average}$は, 以下のような式で表される.
+        \begin{eqnarray}
+          g_{average} = \frac{1-r}{N} + i + f + m - \frac{1-r}{N} (i + f)  \left\{ \frac{1}{i} - \frac{N}{(1 + i)^N - 1} \right\}
+        \end{eqnarray}
+        ただし, 文字の意味は初年度年経費率の部分で述べたものとそれぞれ同一である.\\
+
+        償却期間均等化発電原価$P_{average}$は, 以下のような式で表される.
+        \begin{eqnarray}
+          \label{P_average}
+          P_{average} = P_V + g_{average} \times \frac{P_F}{T_A}
+        \end{eqnarray}
+        ただし, $g_{average}$は上述の償却期間均等化年経費率であり, その他の文字は初年度発電原価の部分で述べたものとそれぞれ同一である.
+
+    \subsection{方法}
+        問題(1)-(4)　式(\ref{g_initial})-(\ref{P_average})に, 表\ref{task1}の前提条件を代入すれば求まる.
+        ただし, 原子力以外での発電電力量1kWhあたりの燃料費$P_V$[円/kWh]は,
+        \begin{eqnarray}
+          P_V[円/\rm{kWh]　= \frac{（燃料費[円/*]）\times 860[kcal/kWh]}{（運転発熱量[kcal/*]） \times （発電効率）}}
+        \end{eqnarray}
+        とすることで計算でき, 石炭火力では1.7円/kWh, 天然ガス火力では13.4円/kWh, 石油火力では24.4円/kWhである. \\
+        また, 設備利用率は70\%として考えるから, 年間運転時間$T_A$[hour/year]は
+        \begin{eqnarray}
+          T_A = \rm{24[hour/day] \times 365[day/year] \times 0.7 = 6132[hour/year]}
+        \end{eqnarray}
+        となる.
+
+%TODO:(5)について調査
+
+    \subsection{結果}
+        問題(1)-(4)の解答は, 表\ref{ans1}に示す通りである.
+
+        \begin{table}[htb]
+          \begin{center}
+            \caption{課題1解答：各種発電所の年経費率・発電原価}
+            \begin{tabular}{|c|c|c|c|c|} \hline
+                  　     & 原子力 & 石炭火力 & 天然ガス火力 & 石油火力 \\ \hline
+              (1)初年度年経費率 & 19.025\% & 20.400\% & 18.400\% & 19.400\% \\ \hline
+              (2)初年度発電原価 & 12.980円/kWh & 10.023円/kWh & 10.959円/kWh & 30.753円/kWh \\ \hline
+              (3)償却期間均等化年経費率 & 15.903\% & 17.245\% & 15.245\% & 16.245\% \\ \hline
+              (4)償却期間均等化発電原価 & 11.096円/kWh & 8.737円/kWh & 16.341円/kWh & 29.724円/kWh \\ \hline
+            \end{tabular}
+            \label{ans1}
+          \end{center}
+        \end{table}
+
+%TODO:(5)について調査
+
+    \subsection{考察}
+
+%TODO:課題１考察
+
+  \section{課題2：最適電源構成の決定（その１）\label{task2}}
+    \begin{screen}
+      　前掲の課題1の結果を用いてスクリーニングカーブを描き, 最適電源構成を求めよう. ただし, 定期点検による可能出力の減少率はそれぞれ, 原子力17\%, 石炭火力17\%, 天然ガス火力17\%, 石油火力17\%とする. その他の前提条件は課題1と同じとする.\\
+      (1)償却期間均等化年経費率を用いて, 運転時間[hour/year]を横軸, 単位設備容量当りの年間総発電コスト[円/kW/year]を縦軸とするスクリーニングカーブを描け. \\
+      (2)図のような日負荷曲線を持つ電力需要を満たす時に最適な電源構成を求めよ（各発電所の設備容量$K_T$[kW]の算出）. ただし, ここでは簡単のため, 日負荷曲線は年間を通じて一定とする. 従って, 年負荷持続曲線を描く際は, 図に示す１時間帯当たりの電力負荷が365時間分に相当することに注意すること.
+    \end{screen}
+
+%TODO:テキスト図6貼り付け, 問題文の図番号参照
+
+    \subsection{原理}
+        横軸に「年間の運転時間[hour/year]」を取り, 縦軸に「単位設備容量当たりの年間総発電コスト[円/kW/year]」を取って, 各種電源のコスト特性を図示したものをスクリーニングカーブという.
+
+        単位設備容量当たりの年間総発電コスト[円/kW/year]を$P_K$とすると, それは年間運転時間$T_A$の関数として次式で求められる. ただし, 年間可変費は年間発電電力量$Q_E$と発電電力量1kWh当たりの燃料費$P_V$の積で, 年間固定費は年経費率$g$と総設備投資額$I_T$との積でそれぞれ求める.
+
+        \begin{eqnarray}
+          \label{screening}
+          P_K = \frac{Q_E \times P_V + g \times I_T}{K_T} = (1-u) \times P_V \times T_A + g \times P_F
+        \end{eqnarray}
+
+        ただし, $u$は定期点検による可能出力の減少率で, 簡単のため通年で一定と仮定している. $P_F$は建設単価[円/kW]である. 式(\ref{screening})より, スクリーニングカーブを構成する一次曲線のy切片は$g \times P_F$, 傾きは$(1-u)\times P_V$となる.\\
+
+        また, 時々刻々と変化する電力負荷を時系列的に結んだ曲線を「負荷曲線」と呼び, この時間的に変化する負荷を大きい順に並べ換えたものを「負荷持続曲線」と呼ぶ. スクリーニングカーブと負荷持続曲線の両者を利用することで, 作図を通して最適な電源構成を簡易的に決定することができる.
+
+%TODO:テキスト図5貼り付け, 図番号参照
+
+    \subsection{方法}
+        問題(1)　表計算ソフトを用いて, それぞれの発電方式について表\ref{task1}のパラメータを元に式(\ref{screening})を図示すれば良い. ただし, 問題文の条件より定期点検による可能出力の減少率$u$はいずれも0.17である.
+
+        問題(2)　表計算ソフトを用いて, 図に示す日負荷曲線を元に年負荷持続曲線を描く. 問題(1)で作成したスクリーニングカーブと照らし合わせて, 最適な電源構成を求める.
+
+        なお, 表計算ソフトとしては, Microsoft Excel 2016（以下Excelと表す）を用いる.
+
+%TODO:図番号参照：問題(2)
+
+    \subsection{結果}
+        スクリーニングカーブと年負荷持続曲線は図\ref{screeningfig}, \ref{nenfukafig}の通りである. これにより, 最適電源構成は石炭火力が236GW, 天然ガス火力が21GW, 原子力と石油火力は用いない, という組み合わせとなる.
+
+        \begin{figure}[htbp]
+          \begin{minipage}{0.5\hsize}
+            \begin{center}
+              \includegraphics[width=60mm]{screeningfig}
+              \caption{スクリーニングカーブ}
+              \label{screeningfig}
+            \end{center}
+          \end{minipage}
+          \begin{minipage}{0.5\hsize}
+            \begin{center}
+              \includegraphics[width=60mm]{nenfukafig}
+              \caption{年負荷持続曲線}
+              \label{nenfukafig}
+            \end{center}
+          \end{minipage}
+        \end{figure}
+
+%TODO:スクリーニングカーブと年負荷曲線見直し
+
+    \subsection{考察}
+
+%TODO:課題２考察
+
+\section{課題3：最適電源構成の決定（その２）}
+  \begin{screen}
+    　\ref{pri3}節に示す式からなる線形計画問題を, Excelのソルバーを用いて, 課題2と同じ前提条件について考察せよ（電源の設備利用率の算出および課題2の結果との比較等）. 各時間帯の出力をExcelの積み上げ面グラフ（電力負荷と揚水動力は折れ線）で作成せよ. なお, 時間帯は2時間とし, 各時間帯の負荷の大きさは表\ref{text_fig2}に示す通りとする.
+  \end{screen}
+
+  \begin{table}[htb]
+    \begin{center}
+      \caption{各時間帯の電力負荷\cite{t}}
+      \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+        時間帯 & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18 & 20 & 22 & 24\\ \hline
+        電力負荷[GW] & 137 & 119 & 112 & 139 & 219 & 248 & 247 & 255 & 242 & 221 & 199 & 170 \\ \hline
+      \end{tabular}
+      \label{text_fig2}
+    \end{center}
+  \end{table}
+
+  \subsection{原理\label{pri3}}
+      課題2ではスクリーニングカーブを負荷持続曲線を用いて総コストが最小になる電源構成を求めたが, 本章ではより複雑な電源構成問題に対して問題を定式化, 線形計画法によるモデル解析を行うことで問題を解決する.
+
+      ここでは課題2で検討した最適電源構成計画を, 以下のような線形計画法の問題として定式化する.
+
+      \subsubsection{変数}
+          最適化の対象となる変数は以下のようになる.
+          \begin{itemize}
+            \item $TC$：年間総発電コスト[百万円/year]
+            \item $X_{i,t}$：第$i$種発電所の時間帯$t$における発電電力[GW]
+            \item $K_i$：第$i$種発電所の設備容量[GW]
+          \end{itemize}
+          ただし, $i \in \{1:原子力, 2:石炭火力, 3:天然ガス火力, 4:石油火力\}$, $t \in \{1, 2, \cdots , 24\}$
+
+      \subsubsection{目的関数}
+          年間総発電コスト$TC$を目的関数として, これを最小化することを考える. すなわち,
+          \begin{eqnarray}
+              TC = \sum_{i=1}^4 (g_i \times P_{Fi} \times K_i + 365 \times H \times \sum_{t=1}^{24} P_{Vi} \times X_{i, t}) \to \rm{min}.
+          \end{eqnarray}
+          である. \
+          ただし, $g_i$：第$i$種発電所の償却期間均等化年経費率, $P_{Fi}$：第$i$種発電所の建設単価[円/kW], $H$：時間帯幅, $P_{Vi}$：第$i$種発電所の発電電力量1kWh当たりの燃料費[円/kWh]である.
+
+      \subsubsection{制約条件式}
+          そして制約条件式は以下のようになる. \\
+          (a)電力需給バランス式\\
+            \begin{eqnarray}
+              \sum_{i=1}^4 X_{i,t} = Load_t　（t = 1, 2, \cdots , 24）
+            \end{eqnarray}
+            ただし, $Load_t$：時間帯$t$における電力負荷[GW], 図を参照のこと.\\
+          (b)設備容量制約\\
+            \begin{eqnarray}
+              X_{i,t} \le (1 - u_i)\times K_i　（i = 1, 2, \cdots , 4）（t = 1, 2, \cdots , 24）
+            \end{eqnarray}
+            ただし, $u_i$；第$i$種発電所の定期点検による出力減少率\\
+
+%TODO:(a)テキスト図6の番号参照
+
+  \subsection{方法}
+      　Excelのソルバーツールとは, 「目的セル」に入っている数式の値を最大化, 最小化あるいは指定値にするように「変数セル」の値の組み合わせを決めるツールである. その際, 制約条件をセルの大小関係で指定する. また, 問題解決の方法を選択できるが, 今回のような線形計画問題ではLPシンプレックスエンジンを用いて解決を行う.
+
+      すなわち, 目的セルには$TC$の式, 目標値は最小値, 変数セルは$X_{i,t}$, $K_i$とし, 条件(a)(b)を制約条件として加える.
+
+  \subsection{結果}
+      ソルバーによる計算の結果, 年間総発電コスト$TC$の最小値は??????であり, その時の各変数は表\ref{ans3}の通りである.
+
+      \begin{table}[htb]
+        \begin{center}
+          \caption{課題3解答：各発電所の時間帯$t$における発電電力$X_{i,t}$と, 設備容量$K_i$}
+          \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c||c|} \hline
+            \multicolumn{1}{|c||}{} & \multicolumn{12}{|c||}{各時間帯の発電電力$X_{i,t}$[GW]} & \multicolumn{1}{|c|}{設備容量} \\ \cline{1-13}
+            時間帯$t$ & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18 & 20 & 22 & 24 & $K_i$[GW]\\ \hline \hline
+            原子力 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\ \hline
+            石炭火力 & 137 & 119 & 112 & 139 & 219 & 248 & 247 & 255 & 242 & 221 & 199 & 170 & 291.57\\ \hline
+            天然ガス火力 & 0 & 0 & 0 & 0 & 0 & 6 & 5 & 13 & 0 & 0 & 0 & 0 & 15.66 \\ \hline
+            石油火力 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\ \hline
+          \end{tabular}
+          \label{ans3}
+        \end{center}
+      \end{table}
+
+%TODO:task3の答えを貼り、傾向を述べる
+
+  \subsection{考察}
+
+%TODO:3日目考察
+
+\section{課題4：最適電源構成の決定（その３）}
+  \begin{screen}
+    (1)下記の式で構成される線形計画問題を, Excelのソルバー機能を用いて解き, その結果を考察せよ（各電源の設備利用率の算出および課題3の結果との比較など）. このとき年間CO$_2$排出量の上限値CO$_{2upper}$に非常に大きな数値を設定し, 実質的にはCO$_2$排出量制約の影響を受けないようにすること. \\
+    (2)同様の前提条件にて, 揚水発電所のないケースについて解き, 上記の問題と結果を比較せよ. 年間総発電コストならびに年間CO$_2$排出量が変化する理由を電源構成の変化から説明し, 揚水発電所の役割について論ぜよ. \\
+    (3)発電のための「平均費用」と「限界費用」（あるいは「増分費用」）との比較を行う. 平均費用とは年間総発電コストを総電力供給量で除したものとして定義されるが, まず平均費用$C_{average}$[円/kWh]を次式を用いて計算せよ.
+      \begin{eqnarray}
+        C_{average} = \frac{TC}{365 \times H \times \sum_{t = 1}^{24} Load_t}
+      \end{eqnarray}
+    次に限界費用であるが, 限界費用とは電力供給量（あるいは電力負荷）を1単位増加させたとき, 追加的に必要となる費用の増分のことである. 本来の定義に従えば, 最適解における目的関数$TC$を電力負荷$Load_t$に関して偏微分することで得られる. 時間帯$t$の電力負荷$Load_t$を微小量$\varepsilon$だけ増加させて, 最適化計算を行った場合の目的関数の値を$TC_t(\varepsilon)$と表現すると, 時間帯$t$の限界費用$C_{marginal,t}$[円/kWh]は次式で求められる.
+      \begin{eqnarray}
+        C_{marginal,t} = \frac{1}{365} \times \frac{\partial TC}{\partial Load_t} \simeq \frac{1}{365} \times \frac{TC_t(\varepsilon)-TC}{\varepsilon}
+      \end{eqnarray}
+    書く時間帯に置いて限界費用およびその時の平均費用を算出し, 時間帯によってどのように変化するか考察すること. \\
+    （限界費用は, 制約条件式の潜在価格などから, 上記以外の方法でも求めることができる. ）\\
+    (4)年間CO$_2$排出量の上限値CO$_2upper$を変化させてシステムの挙動を考察する. 評価する事柄は年間総発電コスト$TC$, 各種電源の設備容量$K_i$など各人の裁量に委ねる. ただし, グラフを描く際には必要な情報（軸の名前, 単位など）を忘れずに記すこと.
+  \end{screen}
+
+
+
+
+  \begin{thebibliography}{9}
+    \bibitem{t} 電気電子情報実験・演習第二テキスト第2分冊　東京大学工学部電気系学科 編
+  \end{thebibliography}
+
+\end{document}
