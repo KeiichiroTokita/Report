@@ -210,22 +210,27 @@
           ただし, $g_i$：第$i$種発電所の償却期間均等化年経費率, $P_{Fi}$：第$i$種発電所の建設単価[円/kW], $H$：時間帯幅, $P_{Vi}$：第$i$種発電所の発電電力量1kWh当たりの燃料費[円/kWh]である.
 
       \subsubsection{制約条件式}
-          そして制約条件式は以下のようになる. \\
-          (a)電力需給バランス式\\
-            \begin{eqnarray}
-              \sum_{i=1}^4 X_{i,t} = Load_t　（t = 1, 2, \cdots , 24）
-            \end{eqnarray}
-            ただし, $Load_t$：時間帯$t$における電力負荷[GW], 図を参照のこと.\\
-          (b)設備容量制約\\
-            \begin{eqnarray}
-              X_{i,t} \le (1 - u_i)\times K_i　（i = 1, 2, \cdots , 4）（t = 1, 2, \cdots , 24）
-            \end{eqnarray}
-            ただし, $u_i$；第$i$種発電所の定期点検による出力減少率\\
+          制約条件式は以下のようになる.
+          \begin{enumerate}
+          \renewcommand{\labelenumi}{(\alph{enumi})}
+            \item 電力需給バランス式
+              \begin{eqnarray}
+                \label{text19}
+                \sum_{i=1}^4 X_{i,t} = Load_t　（t = 1, 2, \cdots , 24）
+              \end{eqnarray}
+              ただし, $Load_t$：時間帯$t$における電力負荷[GW], 図を参照のこと.\\
+            \item 設備容量制約
+              \begin{eqnarray}
+                \label{text20}
+                X_{i,t} \le (1 - u_i)\times K_i　（i = 1, 2, \cdots , 4）（t = 1, 2, \cdots , 24）
+              \end{eqnarray}
+              ただし, $u_i$；第$i$種発電所の定期点検による出力減少率
+          \end{enumerate}
 
 %TODO:(a)テキスト図6の番号参照
 
   \subsection{方法}
-      　Excelのソルバーツールとは, 「目的セル」に入っている数式の値を最大化, 最小化あるいは指定値にするように「変数セル」の値の組み合わせを決めるツールである. その際, 制約条件をセルの大小関係で指定する. また, 問題解決の方法を選択できるが, 今回のような線形計画問題ではLPシンプレックスエンジンを用いて解決を行う.
+      　今回用いるExcelのソルバーツールとは, 「目的セル」に入っている数式の値を最大化, 最小化あるいは指定値にするように「変数セル」の値の組み合わせを決めるツールである. その際, 制約条件をセルの大小関係で指定する. また, 問題解決の方法を選択できるが, 今回のような線形計画問題ではLPシンプレックスエンジンを用いて解決を行う.
 
       すなわち, 目的セルには$TC$の式, 目標値は最小値, 変数セルは$X_{i,t}$, $K_i$とし, 条件(a)(b)を制約条件として加える.
 
@@ -255,10 +260,11 @@
 
 \section{課題4：最適電源構成の決定（その３）}
   \begin{screen}
-    (1)下記の式で構成される線形計画問題を, Excelのソルバー機能を用いて解き, その結果を考察せよ（各電源の設備利用率の算出および課題3の結果との比較など）. このとき年間CO$_2$排出量の上限値CO$_{2upper}$に非常に大きな数値を設定し, 実質的にはCO$_2$排出量制約の影響を受けないようにすること. \\
+    (1)下記の式(\ref{jouken_first})-(\ref{jouken_last})で構成される線形計画問題を, Excelのソルバー機能を用いて解き, その結果を考察せよ（各電源の設備利用率の算出および課題3の結果との比較など）. このとき年間CO$_2$排出量の上限値CO$_{2upper}$に非常に大きな数値を設定し, 実質的にはCO$_2$排出量制約の影響を受けないようにすること. \\
     (2)同様の前提条件にて, 揚水発電所のないケースについて解き, 上記の問題と結果を比較せよ. 年間総発電コストならびに年間CO$_2$排出量が変化する理由を電源構成の変化から説明し, 揚水発電所の役割について論ぜよ. \\
     (3)発電のための「平均費用」と「限界費用」（あるいは「増分費用」）との比較を行う. 平均費用とは年間総発電コストを総電力供給量で除したものとして定義されるが, まず平均費用$C_{average}$[円/kWh]を次式を用いて計算せよ.
       \begin{eqnarray}
+        \label{Cave}
         C_{average} = \frac{TC}{365 \times H \times \sum_{t = 1}^{24} Load_t}
       \end{eqnarray}
     次に限界費用であるが, 限界費用とは電力供給量（あるいは電力負荷）を1単位増加させたとき, 追加的に必要となる費用の増分のことである. 本来の定義に従えば, 最適解における目的関数$TC$を電力負荷$Load_t$に関して偏微分することで得られる. 時間帯$t$の電力負荷$Load_t$を微小量$\varepsilon$だけ増加させて, 最適化計算を行った場合の目的関数の値を$TC_t(\varepsilon)$と表現すると, 時間帯$t$の限界費用$C_{marginal,t}$[円/kWh]は次式で求められる.
@@ -267,10 +273,215 @@
       \end{eqnarray}
     書く時間帯に置いて限界費用およびその時の平均費用を算出し, 時間帯によってどのように変化するか考察すること. \\
     （限界費用は, 制約条件式の潜在価格などから, 上記以外の方法でも求めることができる. ）\\
-    (4)年間CO$_2$排出量の上限値CO$_2upper$を変化させてシステムの挙動を考察する. 評価する事柄は年間総発電コスト$TC$, 各種電源の設備容量$K_i$など各人の裁量に委ねる. ただし, グラフを描く際には必要な情報（軸の名前, 単位など）を忘れずに記すこと.
+    (4)年間CO$_2$排出量の上限値CO$_{2upper}$を変化させてシステムの挙動を考察する. 評価する事柄は年間総発電コスト$TC$, 各種電源の設備容量$K_i$など各人の裁量に委ねる. ただし, グラフを描く際には必要な情報（軸の名前, 単位など）を忘れずに記すこと.
   \end{screen}
 
+  \subsection{原理}
+      課題4も, 課題3と同じく線形計画法によるモデル解析を行う. ただし, 最適電源構成モデルをより現実的なものとするために, 「一般水力発電所」, 「揚水発電所」を追加するとともに, 「既設設備」, 「負荷追随条件」, 「供給予備力」, 「CO$_2$排出量制約」などを加味する. そこで, 以下のような線形計画問題として定式化する.
 
+      \subsubsection{変数}
+          最適化の対象となる変数は以下のようになる. 課題3の問題と比べると, 「揚水動力用の電力」など揚水発電所に関する変数が追加されることになる. なお一般水力発電所は, 後述するように変数としてではなく, 定数として取り扱う.
+          \begin{itemize}
+            \item $TC$：年間総発電コスト[百万円/year]
+            \item $X_{i,t}$：第$i$種発電所の時間帯$t$における発電電力[GW]
+            \item $K_i$：第$i$種発電所の設備容量[GW]
+            \item $S_t$；時間帯$t$における揚水発電所の揚水動力用の電力[GW]
+          \end{itemize}
+          ただし, $i \in \{1:原子力, 2:石炭火力, 3:天然ガス火力, 4:石油火力, 5:揚水\}$, $t \in \{1, 2, \cdots , 24\}$
+
+      \subsubsection{目的関数}
+          年間総発電コスト$TC$を目的関数として, これを最小化することを考える. 課題3の問題と比べると, 揚水発電所の固定費が追加されることになる. また一般水力発電所に関するコストを$TC_0$（定数）とし, その値を1,700,000（百万円/year）とする. すなわち,
+          \begin{eqnarray}
+              TC = TC_0 + \sum_{i=1}^4 (g_i \times P_{Fi} \times K_i + 365 \times H \times \sum_{t=1}^{24} P_{Vi} \times X_{i, t}) + g_5 \times P_{F5} \times K_5 \to \rm{min}.
+          \end{eqnarray}
+          である. \
+          ただし, $g_i$：第$i$種発電所の償却期間均等化年経費率, $P_{Fi}$：第$i$種発電所の建設単価[円/kW], $H$：時間帯幅, $P_{Vi}$：第$i$種発電所の発電電力量1kWh当たりの燃料費[円/kWh]である.
+
+      \subsubsection{制約条件式}
+          制約条件式は以下のようになる.
+          \begin{enumerate}
+          \renewcommand{\labelenumi}{(\alph{enumi})}
+            \item 電力需給バランス式\\
+              (\ref{text19})式に対して, 揚水発電所の揚水動力用の電力$S_t$と, 一般水力発電所出力$Hydro$を追加する. なお簡単のため, $Hydro$は変数ではなく, 定数（全ての$t$に対して15GW）とする.
+              \begin{eqnarray}
+                \label{jouken_first}
+                \sum_{i=1}^5 X_{i,t} - S_t + Hydro = Load_t　（t = 1, 2, \cdots , 24）
+              \end{eqnarray}
+              ただし, $Hydro$：一般水力発電所の出力[GW], $Load_t$：時間帯$t$における電力負荷[GW]\\
+
+            \item 設備容量制約\\
+              (\ref{text20})式に対して, 揚水発電所の設備容量制約が追加される.
+              \begin{eqnarray}
+                X_{i,t} &\le& (1 - u_i)\times K_i　（i = 1, 2, \cdots , 5）（t = 1, 2, \cdots , 24）\\
+                S_t &\le& (1 - u_5) \times K_5　（t = 1, 2, \cdots , 24）
+              \end{eqnarray}
+              ただし, $u_i$；第$i$種発電所の定期点検による出力減少率\\
+
+            \item 既設設備に関する制約
+              \begin{eqnarray}
+                K_i \ge K_{0i}　（i = 1, 2, \cdots , 5）
+              \end{eqnarray}
+              ただし, $K_{0i}$：第$i$種発電所の既設容量[GW]\\
+
+            \item 負荷追随率の上限制約
+              \begin{eqnarray}
+                X_{i,t+1} &\le& X_{i,t} + H \times increase_i \times (1-u_i) \times K_i　（i = 1, 2, \cdots , 4）（t = 1, 2, \cdots , 23）\\
+                X_{i,1} &\le& X_{i,24} + H \times increase_i \times (1-u_i) \times K_i　（i = 1, 2, \cdots , 4）
+              \end{eqnarray}
+              ただし, $increase_i$；第$i$種発電所の1時間当りの出力増大率の上限\\
+
+            \item 負荷追随率の下限制約
+              \begin{eqnarray}
+                X_{i,t+1} &\ge& X_{i,t} - H \times decrease_i \times (1-u_i) \times K_i　（i = 1, 2, \cdots , 4）（t = 1, 2, \cdots , 23）\\
+                X_{i,1} &\ge& X_{i,24} - H \times decrease_i \times (1-u_i) \times K_i　（i = 1, 2, \cdots , 4）
+              \end{eqnarray}
+              ただし, $decrease_i$；第$i$種発電所の1時間当りの出力減少率の上限\\
+
+            \item 供給予備力制約
+              \begin{eqnarray}
+                \sum_{i=1}^5 (1-u_i) \times K_i + Hydro \ge (1 + \delta) \times MAX(Load_t)
+              \end{eqnarray}
+              ただし, $\delta$：供給予備率（ここでは8\%と仮定）\\
+
+            \item 揚水発電所の建設可能容量制約
+              \begin{eqnarray}
+                K_5 \le K_{upper,5}
+              \end{eqnarray}
+              ただし, $K_{upper,5}$：揚水発電所の建設可能容量の上限[GW]\\
+
+            \item 揚水発電所の電力貯蔵に関するバランス式
+              \begin{eqnarray}
+                H \times \sum_{t = 1}^{24} X_{5,t} \le Eff_{storage} \times H \times \sum_{t = 1}^{24} S_t
+              \end{eqnarray}
+              ただし, $Eff_{storage}$：電力貯蔵効率, $H$：時間帯幅\\
+
+            \item 揚水発電所の電力貯蔵可能量制約
+              \begin{eqnarray}
+                H \times \sum_{t = 1}^{24} S_t \le M_{storage} \times (1 - u_5) \times K_5
+              \end{eqnarray}
+              ただし, $M_{storage}$：日間運用での単位設備容量当りの電力貯蔵可能量[kWh/kW], $H$：時間帯幅
+
+            \item 石炭火力発電所の出力下限制約
+              \begin{eqnarray}
+                X_{2,t} \ge 0.4 \times (1-u_2) \times K_2　（t = 1, 2, \cdots , 24）
+              \end{eqnarray}
+
+            \item CO$_2$排出量制約
+              \begin{eqnarray}
+                \label{jouken_last}
+                365 \times H \times \sum_{i=2}^4 (Carbon_i \times \sum_{t = 1}^{24} X_{i, t}) \le CO_{2upper}
+              \end{eqnarray}
+              ただし, $Carbon_i$：第$i$種発電所の1kWhあたりのCO$_2$放出量[ton-CO$_2$/GWh], $H$：時間帯幅, $CO_{2upper}$：年間CO$_2$排出量の上限値[ton-CO$_2$/year]
+
+          \end{enumerate}
+
+
+  \subsection{方法}
+    課題4でも課題3と同様にソルバーツールを用いて解を求めるが, 制約条件の本数が多くExcelのソルバーツールでは解くことができない. そこで課題4ではフリーの表計算ソフト「Apache OpenOffice calc」のソルバーツールを用いた.
+
+    課題4で新たに必要となる情報として, 各種発電所の追加的な前提条件を表\ref{additional}に, また揚水発電所の前提条件を表\ref{yousuijouken}に示す. （文献\cite{t}, P447）
+
+    \begin{table}[htb]
+      \begin{center}
+        \caption{各種発電所の追加的な前提条件\cite{t}}
+        \begin{tabular}{|c|c|c|c|c|} \hline
+              　     & 原子力 & 石炭火力 & 天然ガス火力 & 石油火力 \\ \hline
+          既設設備 & 3,000万kW & 1,500万kW & 3,000万kW & 3,500万kW \\ \hline
+          出力増大率の上限 & 0\%/hour & 26\%/hour & 44\%/hour & 44\%/hour \\ \hline
+          出力減少率の上限 & 0\%/hour & 31\%/hour & 31\%/hour & 31\%/hour \\ \hline
+          CO$_2$放出係数 & 0 & 887g-CO$_2$/kWh & 478g-CO$_2$/kWh & 704g-CO$_2$/kWh \\ \hline
+        \end{tabular}
+        \label{additional}
+      \end{center}
+    \end{table}
+
+    \begin{table}[htb]
+      \begin{center}
+        \caption{揚水発電所の前提条件\cite{t}}
+        \begin{tabular}{|c|c|} \hline
+          建設単価 & 10万円/kW \\ \hline
+          償却期間均等化年経費率 & 14\% \\ \hline
+          定期点検による出力減少率 & 5\% \\ \hline
+          既設設備 & 1,500万kW \\ \hline
+          電力貯蔵効率 & 65\% \\ \hline
+          単位出力当りの貯蔵電力可能量（日間運用） & 3kWh/kW \\ \hline
+          出力変化可能率 & 制限なし \\ \hline
+          建設可能容量の上限 & 4,000万kW \\ \hline
+        \end{tabular}
+        \label{yousuijouken}
+      \end{center}
+    \end{table}
+
+%TODO:(1)-(3)詳しく
+
+  \subsection{結果}
+      (1)ソルバーによる計算の結果, 年間総発電コスト$TC$の最小値は18218290.61であり, その時の各変数は表\ref{ans41}の通りである.
+
+        \begin{table}[htb]
+          \begin{center}
+            \caption{課題4(1)解答：各発電所の時間帯$t$における発電電力$X_{i,t}$と, 設備容量$K_i$, 揚水動力用の電力$S_t$[GW]}
+            \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c||c|} \hline
+              \multicolumn{1}{|c||}{} & \multicolumn{12}{|c||}{各時間帯の発電電力$X_{i,t}$[GW]} & \multicolumn{1}{|c|}{設備容量} \\ \cline{1-13}
+              時間帯$t$ & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18 & 20 & 22 & 24 & $K_i$[GW]\\ \hline \hline
+              原子力 &  24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 30\\ \hline
+              石炭火力 & 97.1 & 93.4 & 73.2 & 99.1 & 183.1 & 183.1 & 183.1 & 183.1 & 183.1 & 183.1 & 159.2 & 130.1 & 220.5\\ \hline
+              天然ガス火力 & 0 & 0 & 0 & 0 & 0 & 21.9 & 24.0 & 24.9 & 15.4 & 0 & 0 & 0 & 30\\ \hline
+              石油火力 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 35\\ \hline
+              揚水 & 0 & 0 & 0 & 0 & 0 & 3.1 & 0 & 7.1 & 3.6 & 0 & 0 & 0 & 15\\ \hline
+            \end{tabular}
+            \label{ans41}
+          \end{center}
+        \end{table}
+        \begin{table}
+          \begin{center}
+            \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+              時間帯$t$ & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18 & 20 & 22 & 24 \\ \hline \hline
+              揚水動力用の電力$S_t$[GW] & 0 & 14.3 & 1.1 & 0 & 4.0 & 0 & 0 & 0 & 0 & 2.0 & 0.1 & 0  \\ \hline
+            \end{tabular}
+          \end{center}
+        \end{table}
+
+        (2)揚水発電所の無いケース, すなわち$X_{5,t} = 0（t = 1, 2, \cdots , 24）$, $S_t = 0（t = 1, 2, \cdots , 24）$, $K_5 = 0$とし, 揚水に関する条件式を除去する. ソルバーによる計算の結果, 年間総発電コスト$TC$の最小値は18251066.3であり, その時の各変数は表\ref{ans42}の通りである.
+
+          \begin{table}[htb]
+            \begin{center}
+              \caption{課題4(2)解答：各発電所の時間帯$t$における発電電力$X_{i,t}$と, 設備容量$K_i$[GW]}
+              \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c||c|} \hline
+                \multicolumn{1}{|c||}{} & \multicolumn{12}{|c||}{各時間帯の発電電力$X_{i,t}$[GW]} & \multicolumn{1}{|c|}{設備容量} \\ \cline{1-13}
+                時間帯$t$ & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18 & 20 & 22 & 24 & $K_i$[GW]\\ \hline \hline
+                原子力 &  24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 24.9 & 30\\ \hline
+                石炭火力 & 97.1 & 93.4 & 73.2 & 99.1 & 183.1 & 183.1 & 183.1 & 183.1 & 183.1 & 183.1 & 159.2 & 130.1 & 220.5\\ \hline
+                天然ガス火力 & 0 & 0 & 0 & 0 & 0 & 21.9 & 24.0 & 24.9 & 15.4 & 0 & 0 & 0 & 30\\ \hline
+                石油火力 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 35\\ \hline
+                揚水 & - & - & - & - & - & - & - & - & - & - & - & - & - \\ \hline
+              \end{tabular}
+              \label{ans42}
+            \end{center}
+          \end{table}
+
+%TODO:(1)(2)比較考察, CO2に関して. (1)1163503507 (2)1153645353
+
+      (3)平均費用は, 式(\ref{Cave})より10.81[円/kWh]と計算される. 時間帯$t$の電力負荷$Load_t$を微小量$\varepsilon = 1$[GW]だけ増加させて最適化計算を行った場合の目的関数値$TC_t(\varepsilon)$を用いて, 限界費用およびその微小量増加時の平均費用を求めた. その結果を表\ref{ans43}に示す.
+
+      \begin{table}
+        \begin{center}
+          \caption{課題4(3)解答：各発電所の時間帯$t$における限界費用と, その微小量増加時の平均費用}
+          \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+            時間帯$t$ & 2 & 4 & 6 & 8 & 10 & 12 & 14 & 16 & 18 & 20 & 22 & 24 \\ \hline \hline
+            限界費用[円/kWh] & 3.4 & 3.4 & 3.4 & 3.4 & 3.4 & 34.1 & 28.5 & 43.1 & 43.1 & 3.4 & 3.4 & 3.4  \\ \hline
+            平均費用[円/kWh] & 10.80 & 10.80 & 10.80 & 10.80 & 10.80 & 10.81 & 10.81 & 10.81 & 10.81 & 10.80 & 10.80 & 10.80    \\ \hline
+          \end{tabular}
+          \label{ans43}
+        \end{center}
+      \end{table}
+
+%TODO:(3)傾向, (4)
+
+  \subsection{考察}
+
+%TODO:課題4考察
+
+\section{課題5：協力ゲーム理論と費用分担}
 
 
   \begin{thebibliography}{9}
