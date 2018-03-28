@@ -1,0 +1,136 @@
+\documentclass[a4paper,10pt,twocolumn,fleqn]{jarticle}
+%\usepackage{common_preamble.sty}
+\usepackage{houkoku}
+
+%%%%%%%%%%% 報告書番号 %%%%%%%%%%%%%
+\newcommand{\Reportnum}[0]{1}%報告書番号
+
+\makeatletter
+\def\ps@myplain{%
+ \let\@mkboth\@gobbletwo
+ \def\@oddhead{ K.Tokita-Task-\thepage} %奇数ページヘッダ，名前の前のスペースは消さないように
+ \def\@oddfoot{ \thepage \ }%奇数ページフッタ
+ \let\@evenhead\@oddhead %偶数ページヘッダ
+ \let\@evenfoot\@oddfoot %偶数ページフッタ\@topnewpage
+}
+\makeatother
+\pagestyle{myplain} %ページスタイル
+\graphicspath{{./fig/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\thesubsection}{問\arabic{subsection}}
+\renewcommand{\figurename}{Fig}
+\renewcommand{\tablename}{Table}
+
+
+\begin{document}
+%\onecolumn
+\twocolumn[
+\begin{flushright}
+\today\\
+東京大学　堀藤本研究室　時田 圭一郎
+\end{flushright}
+\begin{center}
+{\LARGE 環境構築勉強会　課題}
+\end{center}
+\vspace{2zw}
+]
+
+\section{序論}
+  本稿では，環境構築勉強会の課題およびその途中経過と解を示す．本課題は課題1（MATLABとSimulinkによるシミュレーション）と課題2（C言語によるシミュレーション）からなるが，課題1についてはサンプルコードの実行が主であり，課題2の中でも課題1の内容が必要となるため，本稿で改めて記述することはしない．
+
+\section{課題2（C言語によるシミュレーション）の解答}
+  課題2では，簡単なRLC回路を流れる電流Iについて，以下の小問に従ってC言語でシミュレーションを行う．
+
+  \subsection{RLC回路図を描け．}
+    PowerPoint\textregistered を用いて，指定されたRLC回路図を描く．Fig\ref{RLC_circuit}に解答を示す．
+
+    \begin{figure}[htbp]
+      \begin{center}
+        \fbox{
+          \includegraphics[width = 50mm]{first_task_circuit-crop.pdf}
+        }
+        \caption{RLC circuit}
+        \label{RLC_circuit}
+      \end{center}
+    \end{figure}
+
+  \subsection{回路方程式と状態方程式を求めよ．}
+    抵抗・コイル・キャパシタはそれぞれ$R, sL, \dfrac{1}{sC}$のインピーダンスを持つ．オームの法則より，回路方程式は(\ref{circuit_eq})式の通りとなる．
+    \begin{equation}
+      \label{circuit_eq}
+      E = RI + sLI + \frac{1}{sC} I
+    \end{equation}
+
+    この回路方程式に対して状態空間表現を行う．状態変数として電流$I$を$X_1$，キャパシタにかかる電圧を$X_2$とすると，状態方程式は(\ref{state_eq})式の通りとなる．
+    \begin{eqnarray}
+      \label{state_eq}
+        s
+        \left[
+          \begin{array}{c}
+            X_1 \\
+            X_2 \\
+          \end{array}
+        \right]
+        =
+        \left[
+          \begin{array}{cc}
+            -\frac{R}{L} & -\frac{1}{L} \\
+            \frac{1}{C} & 0 \\
+          \end{array}
+        \right]
+        \left[
+          \begin{array}{c}
+            X_1 \\
+            X_2 \\
+          \end{array}
+        \right]
+        +
+        \left[
+          \begin{array}{c}
+            \frac{1}{L} \\
+            0 \\
+          \end{array}
+        \right]
+        E
+    \end{eqnarray}
+
+  \subsection{RLC回路についてRunge=Kutta法を用いたシミュレーションを行いなさい，その結果をグラフで示せ.}
+
+  与えられたソースコードを使い，Runge=Kutta法を用いたシミュレーションを行った．用いた回路定数の値をTable\ref{values}に示す．シミュレーションの結果，(\ref{state_eq})式における状態変数$X_1$, $X_2$の時間変化はそれぞれFig\ref{RungeX1}, \ref{RungeX2}のようになった．電圧はキャパシタにかかる電圧は1Vへ，回路に流れる電流は0Aへと振動的に収束していることが確認できる．
+
+  \begin{table}[htp]
+    \centering
+    \caption{The constant values of the circuit}
+    \label{values}
+    \begin{tabular}{|l|l|}
+      \hline
+      $E$ & 1.0[V] (t $>$ 0)\\ \hline
+      $R$ & 1.0[$\Omega$]  \\ \hline
+      $L$ & 3.0[mH] \\ \hline
+      $C$ & 4.7[$\mu$ F]  \\ \hline
+    \end{tabular}
+  \end{table}
+
+
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width = 60mm]{RungeX1.pdf}
+      \caption{The change of the state variable $X_1$}
+      \label{RungeX1}
+    \end{center}
+  \end{figure}
+
+  \begin{figure}[htbp]
+    \begin{center}
+      \includegraphics[width = 60mm]{RungeX2.pdf}
+      \caption{The change of the state variable $X_2$}
+      \label{RungeX2}
+    \end{center}
+  \end{figure}
+
+
+
+
+\end{document}
