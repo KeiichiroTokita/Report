@@ -22,6 +22,7 @@
 \renewcommand{\thesubsection}{問\arabic{subsection}}
 \renewcommand{\figurename}{Fig}
 \renewcommand{\tablename}{Table}
+\usepackage{comment}
 
 
 \begin{document}
@@ -41,10 +42,10 @@
   本稿では，環境構築勉強会の課題およびその途中経過と解を示す．本課題は課題1（MATLABとSimulinkによるシミュレーション）と課題2（C言語によるシミュレーション）からなるが，課題1についてはサンプルコードの実行が主であり，課題2の中でも課題1の内容が必要となるため，本稿で改めて記述することはしない．
 
 \section{課題2（C言語によるシミュレーション）の解答}
-  課題2では，簡単なRLC回路を流れる電流Iについて，以下の小問に従ってC言語でシミュレーションを行う．
+  課題2では，簡単なRLC回路を流れる電流$I$について，以下の小問に従ってC言語でシミュレーションを行う．
 
   \subsection{RLC回路図を描け．}
-    PowerPoint\textregistered を用いて，指定されたRLC回路図を描く．Fig\ref{RLC_circuit}に解答を示す．
+    PowerPoint\textregistered を用いて，指定されたRLC回路図を描く．Fig \ref{RLC_circuit}に解答を示す．
 
     \begin{figure}[htbp]
       \begin{center}
@@ -98,12 +99,14 @@
 
   \subsection{RLC回路についてRunge=Kutta法を用いたシミュレーションを行いなさい，その結果をグラフで示せ.}
 
-  与えられたソースコードを使い，Runge=Kutta法を用いたシミュレーションを行った．用いた回路定数の値をTable\ref{values}に示す．シミュレーションの結果，(\ref{state_eq})式における状態変数$X_1$, $X_2$の時間変化はそれぞれFig\ref{RungeX1}, \ref{RungeX2}のようになった．電圧はキャパシタにかかる電圧は1Vへ，回路に流れる電流は0Aへと振動的に収束していることが確認できる．
+    与えられたソースコードを使い，Runge=Kutta法を用いたシミュレーションを行った．%用いた回路定数の値をTable\ref{values}に示す．
+    シミュレーションの結果，(\ref{state_eq})式における状態変数$X_1$, $X_2$の時間変化はそれぞれFig \ref{RungeX1}, \ref{RungeX2}のようになった．キャパシタにかかる電圧は1Vへ，回路に流れる電流は0Aへと振動的に収束していることが確認できる．なお，印加電圧は$E = 1$Vとしており，これらの値の正当性が確認できる．
 
+\begin{comment}
   \begin{table}[htp]
     \centering
     \caption{The constant values of the circuit}
-    \label{values}
+  %  \label{values}
     \begin{tabular}{|l|l|}
       \hline
       $E$ & 1.0[V] (t $>$ 0)\\ \hline
@@ -112,25 +115,84 @@
       $C$ & 4.7[$\mu$ F]  \\ \hline
     \end{tabular}
   \end{table}
+\end{comment}
 
 
-  \begin{figure}[htbp]
-    \begin{center}
-      \includegraphics[width = 60mm]{RungeX1.pdf}
-      \caption{The change of the state variable $X_1$}
-      \label{RungeX1}
-    \end{center}
-  \end{figure}
+    \begin{figure}[htbp]
+      \begin{center}
+        \fbox{
+        \includegraphics[width = 60mm]{RungeX1.pdf}
+        }
+        \caption{The change of the state variable $X_1$ when using the Runge–Kutta method}
+        \label{RungeX1}
+      \end{center}
+    \end{figure}
 
-  \begin{figure}[htbp]
-    \begin{center}
-      \includegraphics[width = 60mm]{RungeX2.pdf}
-      \caption{The change of the state variable $X_2$}
-      \label{RungeX2}
-    \end{center}
-  \end{figure}
+    \begin{figure}[htbp]
+      \begin{center}
+        \fbox{
+        \includegraphics[width = 60mm]{RungeX2.pdf}
+        }
+        \caption{The change of the state variable $X_2$ when using the Runge–Kutta method}
+        \label{RungeX2}
+      \end{center}
+    \end{figure}
 
+  \subsection{C言語でのシミュレーションをEuler法でも実行し，Runge=Kutta法との違いを考察せよ．}
 
+    %sTODO:Runge=Kutta法とEuler法の比較
+
+    Fig \ref{EulerX1}, \ref{EulerX2}は，Euler法・Runge=Kutta法を用いたときの状態変数$X_1$, $X_2$の時間変化をそれぞれ比較したものである．どちらの変数も，Euler法を用いてシミュレーションした時の方が収束に時間が長くかかっていることがわかる．Euler法は次の値を計算するために現在の値・傾きだけを用いるのに対し，Runge=Kutta法はそれより後の時刻の値・傾きを推定して計算に用いている．そのために，Runge=Kutta法の方が急峻な変化に対して追従しやすく，収束が早くなるのではないかと考えられる．
+
+    \begin{figure}[htbp]
+      \begin{center}
+        \fbox{
+        \includegraphics[width = 60mm]{EulerX1.pdf}
+        }
+        \caption{The comparison of the change of the state variable $X_1$ when using two different methods}
+        \label{EulerX1}
+      \end{center}
+    \end{figure}
+
+    \begin{figure}[htbp]
+      \begin{center}
+        \fbox{
+        \includegraphics[width = 60mm]{EulerX2.pdf}
+        }
+        \caption{The comparison of the change of the state variable $X_2$ when using two different methods}
+        \label{EulerX2}
+      \end{center}
+    \end{figure}
+
+  \subsection{Cのプログラムファイル（RLC.c）の書き出し部分で何をしているのか説明せよ．}
+    RLC.cの書き出し部分では，回路定数やサンプリング周期，状態方程式の各行列を定義しており，シミュレーション部分に入るための準備をしている．また，シミュレーションの結果を格納するためのcsvファイルを準備をしている．
+
+    このソースコードではサンプリング周期Tsを$1{\rm \mu s}$にしてあり，開始時刻をTstart $ = 0$，終了時刻をTend $= 0.50{\rm s}$としているため，演算回数NはN = (Tend - Tstart) / Ts = 50000回となる．一方データ点数datanumを5000点にしているため，出力されるデータが50000 / 5000 = 10個おきになるようにシミュレーション部分を設けてある．
+
+  \subsection{過渡応答の部分をより細かくプロットするにはどうしたら良いか答えよ．}
+    過渡応答の部分をより細かくプロットするには，データ点数を増やせば良い．上述の通り，現状のソースコードでは演算した10個の点のうち1個しかプロットしていないため，最大で10倍までプロット数を増やせる．それ以上プロットを細かくするには，演算回数そのものも大きくする必要がある．計算の負荷を軽減するためには，定常応答となる部分でプロット数を減らすといった工夫をすれば良いと考えられる．
+
+  \subsection{function.h内の関数の引数にポインタで与えているのはなぜか説明せよ．}
+
+  %TODO 値渡し，参照渡し
+
+  C言語では，return文を使うだけでは一つの関数で複数の値を返すことができない．そこで関数の引数として変数を与え，その変数を書き換えることで複数の演算結果を得られるようにするのだが，ポインタでない通常の変数を与えると「値渡し」になるため，関数内で値を書き換えてもその関数を抜け出すと値を保持することができない．一方ポインタ変数によってアドレスを与える「参照渡し」にすると，その関数を抜け出しても値を保持することができるため，行列やベクトルの計算など複数の値が必要なfunction.h内の関数にこの方法を使っている．
+
+  例として，function.h内にあるrunge関数について見てみたい．この関数はRunge=Kutta法を用いたシミュレーションを行うものであり，引数に五つの変数を与えている．それぞれの変数がどのような役割を担っているかをTable \ref{function.h}にて説明する．変数xをポインタで与えることで，複数の状態変数をまとめて演算できる．
+
+    \begin{table}[htp]
+      \centering
+      \caption{Variables in "function.h"}
+      \label{function.h}
+      \begin{tabular}{|l|l|}
+      \hline
+      double h       & サンプリング周期Ts（刻み幅） \\ \hline
+      double *a      & 状態行列$A$ \\ \hline
+      double x{[}{]} & \bf 演算結果：状態変数ベクトル  \\ \hline
+      double b{[}{]} & 入力行列$B$ \\ \hline
+      double u       & 入力（印加電圧$E$）  \\ \hline
+      \end{tabular}
+    \end{table}
 
 
 \end{document}
